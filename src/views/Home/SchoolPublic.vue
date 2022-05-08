@@ -409,8 +409,6 @@ export default {
         this.selForm.Features = 'F'
       }
 
-      console.log(this.selForm.Position)
-
       this.$http({
         method:'post',
         url:'/User/showUniversityByNeed',

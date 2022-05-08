@@ -285,6 +285,7 @@ export default {
         url: '/User/showUniversityByNeed',
         data: this.selForm
       }).then(res => {
+        console.log(res);
         for (let i = 0; i < res.data.list.length; i++) {
           res.data.list[i].type = res.data.list[i].firstClass
           res.data.list[i].site = 'https://static-data.eol.cn/upload/logo/' + res.data.list[i].school_id + '.jpg'

@@ -98,6 +98,7 @@ const router = createRouter({
 
 //导航守卫
 //开启前先做白名单
+/*
 router.beforeEach((to, from, next) => {
   if (to.path === '/Login'||to.path === '/SchoolPublic'||to.path === '/MajorPublic'||to.path === '/Home'|| to.path === '/Signup')
     return next();
@@ -107,5 +108,6 @@ router.beforeEach((to, from, next) => {
   if (!tokenStr) return next('/Login');
 
 })
-
+*/
 export default router
+

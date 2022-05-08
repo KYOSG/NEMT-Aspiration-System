@@ -8,7 +8,7 @@ module.exports = {
             msTileImage: 'favicon.ico'
         }
     },
-    outputDir: 'dcp',
+    outputDir: 'GK',
     // 把所有静态资源放 static 中
     publicPath:'./'
 }

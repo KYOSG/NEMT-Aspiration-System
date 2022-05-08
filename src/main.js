@@ -15,7 +15,7 @@ app.use(store).use(router).mount('#app')
 
 app.config.globalProperties.$http = axios;
 //接口请求的基准路径
-axios.defaults.baseURL = 'http://106.15.196.199:8080/ssm-bbms';
+axios.defaults.baseURL = 'http://106.15.196.199/ssm-platform-master/';
 // 添加请求拦截器
 
 axios.interceptors.request.use(config => {
