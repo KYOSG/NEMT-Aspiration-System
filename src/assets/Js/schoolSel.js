@@ -28,7 +28,7 @@ default {
 
             checkAllFe: true,
             checkedFeatures: [''],
-            Features: Feature,
+            features: Feature,
 
             FeatureS: ''
         };
@@ -79,8 +79,8 @@ default {
         },
         handleCheckedFeatureChange(valueFe) {
             let checkedFeature = valueFe.length;
-            this.checkAllFe = checkedFeature === this.Features.length;
-            this.isIndeterminate = checkedFeature > 0 && checkedFeature < this.Features.length;
+            this.checkAllFe = checkedFeature === this.features.length;
+            this.isIndeterminate = checkedFeature > 0 && checkedFeature < this.features.length;
         },
     }
 };

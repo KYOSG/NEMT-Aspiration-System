@@ -58,7 +58,7 @@
                 <div>
                   <el-space wrap :size="43">
                     <span class="demonstration">主管部门 </span>
-                    <el-radio-group v-model="selForm.Manage" @change="submit">
+                    <el-radio-group v-model="selForm.manage" @change="submit">
                       <el-radio-button label="全部"></el-radio-button>
                       <el-radio-button label="教育部"></el-radio-button>
                       <el-radio-button label="其他部委"></el-radio-button>
@@ -71,7 +71,7 @@
                 <div>
                   <el-space  wrap :size="43">
                     <span class="demonstration">院校层级 </span>
-                    <el-radio-group v-model="selForm.Layer" @change="submit">
+                    <el-radio-group v-model="selForm.layer" @change="submit">
                       <el-radio-button label="全部"></el-radio-button>
                       <el-radio-button label="本科"></el-radio-button>
                       <el-radio-button label="高职（专科）"></el-radio-button>
@@ -86,7 +86,7 @@
                   <el-space wrap :size="43">
                     <span class="demonstration">院校特点 </span>
                     <el-space :size="10" :spacer="spacer">
-                      <el-radio-group v-model="selForm.Level" @change="submit">
+                      <el-radio-group v-model="selForm.level" @change="submit">
                         <el-radio-button label="全部"></el-radio-button>
                         <el-popover
                             placement="bottom"
@@ -131,7 +131,7 @@
                 <el-space>
                   <el-input
                       placeholder="请输入院校名称"
-                      v-model="selForm.Name"
+                      v-model="selForm.name"
                       @keyup.enter.native="search"
                       clearable>
                   </el-input >
@@ -222,15 +222,15 @@ export default {
       props: {multiple: true},
       Switch: false,
       options: require('../../../public/static/Data/positionData.json'),
-      selForm: {
-        Position: [],
-        Manage: '全部',
-        Level: '全部',
-        Layer: '全部',
-        Features: '',
-        pageNum: 1,
+      subForm: {
+        position: [],
+        manage: '全部',
+        level: '全部',
+        layer: '全部',
+        features: '',
+        currentPage: 1,
         pageSize: 50,
-        Name: '',
+        name: '',
         schoolChoice: [],
       },
       schoolList: [],
@@ -264,26 +264,26 @@ export default {
     MajorSell:function (){
       this.$router.push('/MajorSel');
     },
-    submit() {
+    getData() {
       this.searchOption = false
-      this.selForm.Position = []
+      this.subForm.position = []
       //给位置数组赋值方便后端接收数据
       for (let i = 0; i < this.$refs['cascadeAddr'].getCheckedNodes().length; i++) {
         if (this.$refs['cascadeAddr'].getCheckedNodes()[i].level === 2) {
-          this.selForm.Position[i] = this.$refs['cascadeAddr'].getCheckedNodes()[i].data.label
+          this.subForm.position[i] = this.$refs['cascadeAddr'].getCheckedNodes()[i].data.label
         }
       }
       //处理开关数据
       if (this.Switch === true) {
-        this.selForm.Features = 'T'
+        this.subForm.Features = 'T'
       } else {
-        this.selForm.Features = 'F'
+        this.subForm.Features = 'F'
       }
 
       this.$http({
         method: 'post',
         url: '/User/showUniversityByNeed',
-        data: this.selForm
+        data: this.subForm
       }).then(res => {
         console.log(res);
         for (let i = 0; i < res.data.list.length; i++) {
@@ -358,23 +358,23 @@ export default {
     pageSizeChange(newSize) {
       if (newSize === null)
         return
-      this.selForm.pageSize = newSize;
+      this.subForm.pageSize = newSize;
       this.submit();
     },
     pageCurrentChange(newPage) {
-      this.selForm.pageNum = newPage;
+      this.subForm.pageNum = newPage;
       this.submit();
     },
     search() {
       this.searchOption = true
 
-      this.selForm.pageNum = 1;
-      this.selForm.pageSize = 50;
+      this.subForm.pageNum = 1;
+      this.subForm.pageSize = 50;
 
       this.$http({
         method: 'post',
         url: '/User/getUniversityByName',
-        data: this.selForm
+        data: this.subForm
       }).then(res => {
 
         console.log(res.data)

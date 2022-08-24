@@ -46,7 +46,7 @@ export default {
     return{
       //用户列表
       Info:{
-        pageNum: 1,
+        currentPage: 1,
         pageSize: 50,
         identity:'teacher'
       },
@@ -78,13 +78,13 @@ export default {
       if (newSize === null)
         return
       this.Info.pageSize = newSize;
-      this.submit();
+      this.getData();
     },
     pageCurrentChange(newPage) {
       if (newPage === null)
         return
       this.Info.pageNum = newPage;
-      this.submit();
+      this.getData();
     },
 
     removeSt(username){

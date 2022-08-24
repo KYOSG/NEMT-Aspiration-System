@@ -244,10 +244,10 @@ export default {
       props: {multiple: true},
       options:require('../../../public/static/Data/majorData.json'),
       Switch: false,
-      selForm:{
+      subForm:{
         majorList:[],
         batch:'全部',
-        pageNum: 1,
+        currentPage: 1,
         pageSize: 50,
         subject: [],
         lowLevel: ''
@@ -273,23 +273,23 @@ export default {
     this.submit();
   },
   methods: {
-    submit() {
-      this.selForm.lowLevel = this.rank
-      if (this.selForm.lowLevel === ''){
-        this.selForm.lowLevel = 0
+    getData() {
+      this.subForm.lowLevel = this.rank
+      if (this.subForm.lowLevel === ''){
+        this.subForm.lowLevel = 0
       }
-      this.selForm.majorList = []
+      this.subForm.majorList = []
 
       for (let i = 0; i < this.$refs['cascadeAddr'].getCheckedNodes().length; i++) {
         if (this.$refs['cascadeAddr'].getCheckedNodes()[i].level === 1) {
-          this.selForm.majorList[i] = this.$refs['cascadeAddr'].getCheckedNodes()[i].data.label
+          this.subForm.majorList[i] = this.$refs['cascadeAddr'].getCheckedNodes()[i].data.label
         }
       }
       if (this.Switch === false){
         this.$http({
           method: 'post',
           url: '/User/showMajorWithoutUniversity',
-          data: this.selForm
+          data: this.subForm
         }).then(res => {
           console.log(res);
           this.getMajorList = res.data.list
@@ -300,7 +300,7 @@ export default {
         this.$http({
           method: 'post',
           url: '/User/showMajorFromSelectUniversity',
-          data: this.selForm
+          data: this.subForm
         }).then(res => {
           console.log(res);
           this.getMajorList = res.data.list
@@ -324,21 +324,21 @@ export default {
     pageSizeChange(newSize) {
       if (newSize === null)
         return
-      this.selForm.pageSize = newSize;
+      this.subForm.pageSize = newSize;
       this.submit();
     },
     pageCurrentChange(newPage) {
       if (newPage === null)
         return
-      this.selForm.pageNum = newPage;
+      this.subForm.pageNum = newPage;
       this.submit();
     },
     add(id) {
-      this.selForm.major_id = id
+      this.subForm.major_id = id
       this.$http({
         method: 'post',
         url: '/User/insertMajorIntoDatabase',
-        data: this.selForm
+        data: this.subForm
       }).then(res => {
         console.log(res)
         if (res.data.info.code === 200) {
@@ -356,12 +356,12 @@ export default {
       })
     },
     del(id) {
-      this.selForm.major_id = id
+      this.subForm.major_id = id
 
       this.$http({
         method: 'post',
         url: '/User/deleteMajorByStudent',
-        data: this.selForm
+        data: this.subForm
       }).then(res => {
         if (res.data.info.code === 200) {
           ElMessage.success({
@@ -383,11 +383,11 @@ export default {
       }, 100);
     },
     switchOption() {
-      this.selForm.majorList = []
+      this.subForm.majorList = []
 
       for (let i = 0; i < this.$refs['cascadeAddr'].getCheckedNodes().length; i++) {
         if (this.$refs['cascadeAddr'].getCheckedNodes()[i].level === 1) {
-          this.selForm.majorList[i] = this.$refs['cascadeAddr'].getCheckedNodes()[i].data.label
+          this.subForm.majorList[i] = this.$refs['cascadeAddr'].getCheckedNodes()[i].data.label
         }
       }
 
@@ -395,7 +395,7 @@ export default {
         this.$http({
           method: 'post',
           url: '/User/showMajorWithoutUniversity',
-          data: this.selForm
+          data: this.subForm
         }).then(res => {
 
           this.getMajorList = res.data.list
@@ -406,7 +406,7 @@ export default {
         this.$http({
           method: 'post',
           url: '/User/showMajorFromSelectUniversity',
-          data: this.selForm
+          data: this.subForm
         }).then(res => {
 
           this.getMajorList = res.data.list
@@ -420,16 +420,16 @@ export default {
     },
     submitCreate(){
       this.majorCreateList = []
-      this.selForm.lowLevel = this.rank
-      if (this.selForm.lowLevel === ''){
-        this.selForm.lowLevel = 0
+      this.subForm.lowLevel = this.rank
+      if (this.subForm.lowLevel === ''){
+        this.subForm.lowLevel = 0
       }
-      console.log(this.selForm)
-      this.selForm.majorList = []
+      console.log(this.subForm)
+      this.subForm.majorList = []
       this.$http({
         method: 'post',
         url: '/User/getAutoMajor',
-        data: this.selForm
+        data: this.subForm
       }).then(res => {
         console.log(res.data)
         this.majorCreateList = res.data

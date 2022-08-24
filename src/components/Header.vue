@@ -9,16 +9,16 @@
               <nav class="site-navbar">
                 <ul>
                   <li><a href="#">首页</a></li>
-                  <li><a @click="School">院校库</a></li>
-                  <li><a @click="Major" >专业库</a></li>
-                  <div class="Login" v-show="judge1">
-                    <li class="margina"><a @click="Signup">注册</a></li>
-                    <li><a @click="Login">登录</a></li>
+                  <li><a @click="this.$router.push('/SchoolInf');">院校库</a></li>
+                  <li><a @click="this.$router.push('/MajorInf');" >专业库</a></li>
+                  <div class="Login" v-show="!info.isLogin">
+                    <li class="margina"><a @click="this.$router.push('/Signup');">注册</a></li>
+                    <li><a @click="this.$router.push('/Login');">登录</a></li>
                   </div>
 
-                  <div class="Login" v-show="judge2">
+                  <div class="Login" v-show="info.isLogin">
                     <li class="margina"><a @click="LoginOut">退出</a></li>
-                    <li><a @click="HHome">个人主页</a></li>
+                    <li><a @click="this.$router.push('/StudentHome');">个人主页</a></li>
                   </div>
                 </ul>
                 <button class="nav-toggler">
@@ -42,46 +42,31 @@ export default {
     return{
       judge1: true,
       judge2: false,
+
+      info:{
+        identity:'',
+        username:'',
+        isLogin:false,
+      }
     }
   },
   mounted() {
-    this.Judge();
+    this.info.identity = window.sessionStorage.getItem("identity");
+    this.info.username = window.sessionStorage.getItem("username");
+    if (this.info.username!==null){
+      this.info.isLogin = true;
+    }
   },
   methods:{
-    HHome:function (){
-      this.$router.push('/StudentHome');
-    },
-    Judge(){
-      if (window.sessionStorage.getItem("Login") === "1"){
-        this.judge1 = false;
-        this.judge2 = true;
-      }
-    },
     LoginOut(){
-      this.judge1 = true;
-      this.judge2 = false;
-      window.sessionStorage.removeItem("username");
-      window.sessionStorage.removeItem("token");
-      window.sessionStorage.removeItem("identity");
-      window.sessionStorage.setItem("Login", "0");
+      window.sessionStorage.clear();
+
       this.$notify({
         title: '退出成功',
         message: '再会',
         type: 'success'
       });
       this.$router.push('/Home');
-    },
-    School:function (){
-      this.$router.push('/SchoolPublic');
-    },
-    Major:function (){
-      this.$router.push('/MajorPublic');
-    },
-    Signup:function (){
-      this.$router.push('/Signup');
-    },
-    Login:function (){
-      this.$router.push('/Login');
     },
   },
   components: {
