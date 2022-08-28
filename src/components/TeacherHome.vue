@@ -41,7 +41,7 @@
 
 <script>
 export default {
-  name: "StudentInt",
+  name: "TeacherHome",
   data(){
     return{
       //用户列表

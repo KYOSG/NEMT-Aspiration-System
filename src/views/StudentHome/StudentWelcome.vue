@@ -11,15 +11,15 @@
         </div>
         <div class="fr">
           <ul>
-            <li><a @click="StudentHomee">个人主页</a></li>
+            <li><a @click="this.$router.push('/StudentHome');">个人主页</a></li>
             <li></li>
-            <li class="arrow-icon"><a @click="SchoolSell">院校选择</a></li>
+            <li class="arrow-icon"><a @click="this.$router.push('/SchoolSel');">院校选择</a></li>
             <li></li>
-            <li><a @click="MajorSell">专业选择</a></li>
+            <li><a @click="this.$router.push('/MajorSel');">专业选择</a></li>
             <li></li>
-            <li class="arrow-icon"><a @click="School">院校信息查询</a></li>
+            <li class="arrow-icon"><a @click="this.$router.push('/SchoolInf');">院校信息查询</a></li>
             <li></li>
-            <li class="arrow-icon"><a @click="Major">专业信息查询</a></li>
+            <li class="arrow-icon"><a @click="this.$router.push('/MajorInf');">专业信息查询</a></li>
           </ul>
         </div>
       </div>
@@ -49,24 +49,9 @@ export default {
     }
   },
   mounted() {
-    this.getStudent()
+    //this.getStudent()
   },
   methods: {
-    StudentHomee:function (){
-      this.$router.push('/StudentHome');
-    },
-    School:function (){
-      this.$router.push('/SchoolInf');
-    },
-    Major:function (){
-      this.$router.push('/MajorInf');
-    },
-    SchoolSell:function (){
-      this.$router.push('/SchoolSel');
-    },
-    MajorSell:function (){
-      this.$router.push('/MajorSel');
-    },
     getStudent(){
       this.$http({
         method: 'post',

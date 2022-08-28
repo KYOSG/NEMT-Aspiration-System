@@ -42,72 +42,71 @@
                 <el-cascader
                     placeholder="试试搜索：计算机类"
                     :options="options"
-                    :props="{ multiple: true }"
                     filterable
                     collapse-tags
                     ref="cascadeAddr"
                     clearable
-                    @change="submit" class="float search"></el-cascader>
+                    @change="getData" class="float search"></el-cascader>
             </el-space>
               <!--层级-->
               <el-space  wrap :size="1">
-                <h4>院校层次：</h4>
+<!--                <h4>院校层次：</h4>
                 <el-space :size="10" :spacer="spacer">
-                  <el-radio-group v-model="selForm.batch" @change="submit" class="float">
+                  <el-radio-group v-model="subForm.type" @change="getData" class="float">
                     <el-radio-button label="全部" class="float  three_box color"></el-radio-button>
                     <el-radio-button label="本科" class="float  three_box color"></el-radio-button>
                     <el-radio-button label="专科" class="float  three_box color"></el-radio-button>
-                  </el-radio-group>
-                  <el-switch v-model="Switch" active-text="查看所有学校" inactive-text="仅查看已选学校" @change="switchOption" class="margin2"></el-switch>
-                </el-space>
+                  </el-radio-group>-->
+                  <el-switch v-model="Switch" active-text="仅查看已选学校" inactive-text="查看所有学校" @change="switchOption" class="margin2"></el-switch>
+<!--                </el-space>-->
               </el-space>
               <!--选课要求-->
-                <el-space  wrap :size="1">
-                  <h4 >所选科目：</h4>
-                  <el-space :size="10" :spacer="spacer">
-                    <div>
-                      <el-checkbox-group v-model="selForm.subject" size="small" @change="submit">
-                        <el-checkbox-button v-for="major in majors" :label="major" :key="major">{{major}}</el-checkbox-button>
-                      </el-checkbox-group>
-                    </div>
-                    <el-space wrap :size="10">
-                      <h4 class="margin1">高考位次：</h4>
-                      <el-space wrap :size="40">
-                        <el-input v-model.number="rank" placeholder="高考位次" @change="submit" class="float ranking"></el-input>
-                        <div>
-                          <el-button @click="showDrawer" type="primary" class="top_button float">查看已选专业</el-button>
-                          <el-button @click="showCreateForm" type="primary" class="top_button float">生成志愿列表</el-button>
-                        </div>
-                      </el-space>
-                  </el-space>
-                  </el-space>
+              <el-space  wrap :size="1">
+                <h4 >所选科目：</h4>
+                <el-space :size="10" :spacer="spacer">
+                  <div>
+                    <el-radio-group v-model="subForm.subject" size="small" @change="getData">
+                      <el-radio-button v-for="major in majors" :label="major" :key="major">{{major}}</el-radio-button>
+                    </el-radio-group>
+                  </div>
+                  <el-space wrap :size="10">
+                    <h4 class="margin1">高考位次：</h4>
+                    <el-space wrap :size="40">
+                      <el-input v-model.number="subForm.rank" min="1" placeholder="高考位次" @change="getData" class="float ranking"></el-input>
+                      <div>
+                        <el-button @click="showDrawer" type="primary" class="top_button float">查看已选专业</el-button>
+<!--                        <el-button @click="showCreateForm" type="primary" class="top_button float">生成志愿列表</el-button>-->
+                      </div>
+                    </el-space>
                 </el-space>
+                </el-space>
+              </el-space>
             </el-space>
           </el-space>
           <!--查询结果-->
           <div class="kkk">
             <el-table
-                :data="getMajorList"
+                :data="specialList"
                 border stripe
+                max-height="780px"
                 highlight-current-row
-                max-height="700"
                 :header-cell-style="{'text-align':'center'}"
                 :cell-style="{'text-align':'center'}">
-              <el-table-column label="专业招生代码" prop="methodCode"></el-table-column>
-              <el-table-column label="专业名称" prop="major"></el-table-column>
-              <el-table-column label="所属高校" prop="admissionDirection"></el-table-column>
-              <el-table-column label="所属高校招生代码" prop="admissionCode"></el-table-column>
-              <el-table-column label="最低录取分数" prop="lowScore"></el-table-column>
-              <el-table-column label="最低录取位次" prop="lowLevel"></el-table-column>
-              <el-table-column label="选课要求" prop="request"></el-table-column>
+              <el-table-column label="高校代码" prop="schoolCode"></el-table-column>
+              <el-table-column label="专业名称" prop="specialName"></el-table-column>
+              <el-table-column label="所属高校" prop="schoolName"></el-table-column>
+              <el-table-column label="专业代码" prop="specialCode"></el-table-column>
+              <el-table-column label="录取批次" prop="batch"></el-table-column>
+              <el-table-column label="最低录取分数" prop="lowMark"></el-table-column>
+              <el-table-column label="最低录取位次" prop="lowRank"></el-table-column>
+              <el-table-column label="选课要求" prop="subjectLimit"></el-table-column>
+              <el-table-column label="备注" prop="addition"></el-table-column>
               <el-table-column label="操作" prop="">
                 <template #default="scope">
-                  <el-button type="primary" round @click="add(scope.row.major_id)">加入备选</el-button>
+                  <el-button type="primary" round @click="add(scope.row)">加入备选</el-button>
                 </template>
               </el-table-column>
-
             </el-table>
-
           </div>
 
           <!--已选专业抽屉-->
@@ -119,17 +118,17 @@
               size="50%">
             <el-table :data="majorChoiceList"
                       highlight-current-row
-                      @change="submit"
+                      @change="getData"
                       max-height="700"
                       :border = true
                       :header-cell-style="{'text-align':'center'}"
                       :cell-style="{'text-align':'center'}">
-              <el-table-column property="admissionDirection" label="院校"></el-table-column>
-              <el-table-column property="major" label="专业"></el-table-column>
-              <el-table-column property="lowLevel" label="最低录取位次"></el-table-column>
+              <el-table-column property="schoolName" label="院校"></el-table-column>
+              <el-table-column property="specialName" label="专业"></el-table-column>
+              <el-table-column property="lowRank" label="最低录取位次"></el-table-column>
               <el-table-column  label="操作">
                 <template #default="scope">
-                  <el-button type="danger" icon="el-icon-delete" circle @click="del(scope.row.major_id)"></el-button>
+                  <el-button type="danger" icon="el-icon-delete" circle @click="del(scope.row)"></el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -137,90 +136,90 @@
           </el-drawer>
 
           <!--生成志愿-->
-          <el-dialog
-              title="生成志愿列表"
-              v-model="dialogVisible"
-              width="70%">
+<!--          <el-dialog-->
+<!--              title="生成志愿列表"-->
+<!--              v-model="dialogVisible"-->
+<!--              width="70%">-->
 
-            <el-space :size="33">
-              <el-space direction="vertical"  class="select" alignment="flex-start" :size="15">
-                <!--专业筛选-->
-                <el-space wrap :size="1">
-                  <h4>专业类别：</h4>
-                  <el-cascader
-                      placeholder="试试搜索：计算机类"
-                      :options="options"
-                      :props="{ multiple: true }"
-                      filterable
-                      collapse-tags
-                      ref="cascadeAddr"
-                      clearable
-                      @change="submit" class="float search"></el-cascader>
-                </el-space>
-                <!--层级-->
-                <el-space  wrap :size="1">
-                  <h4>院校层次：</h4>
-                  <el-space :size="10" :spacer="spacer">
-                    <el-radio-group v-model="selForm.batch" @change="submit" class="float">
-                      <el-radio-button label="全部" class="float  three_box color"></el-radio-button>
-                      <el-radio-button label="本科" class="float  three_box color"></el-radio-button>
-                      <el-radio-button label="专科" class="float  three_box color"></el-radio-button>
-                    </el-radio-group>
-                    <el-switch v-model="Switch" active-text="查看所有学校" inactive-text="仅查看已选学校" @change="switchOption" class="margin2"></el-switch>
-                  </el-space>
-                </el-space>
-                <!--选课要求-->
-                <el-space  wrap :size="1">
-                  <h4 >所选科目：</h4>
-                  <el-space :size="10" :spacer="spacer">
-                    <div>
-                      <el-checkbox-group v-model="selForm.subject" size="small" @change="submit">
-                        <el-checkbox-button v-for="major in majors" :label="major" :key="major">{{major}}</el-checkbox-button>
-                      </el-checkbox-group>
-                    </div>
-                    <el-space wrap :size="10">
-                      <h4 class="margin1">高考位次：</h4>
-                      <el-space wrap :size="40">
-                        <el-input v-model.number="rank" placeholder="高考位次" @change="submit" class="float ranking"></el-input>
-                        <el-button type="primary" @click="submitCreate">生成志愿</el-button>
-                      </el-space>
-                    </el-space>
-                  </el-space>
-                </el-space>
-              </el-space>
-            </el-space>
-            <!--结果-->
-            <el-table :data="majorCreateList"
-                      highlight-current-row
-                      @change="submit"
-                      max-height="700"
-                      :border = true
-                      :header-cell-style="{'text-align':'center'}"
-                      :cell-style="{'text-align':'center'}">
-              <el-table-column property="admissionDirection" label="院校"></el-table-column>
-              <el-table-column property="major" label="专业"></el-table-column>
-              <el-table-column property="lowLevel" label="最低录取位次"></el-table-column>
-              <el-table-column  label="操作">
-                <template #default="scope">
-                  <el-button type="danger" icon="el-icon-delete" circle @click="delCreate(scope.row.major_id)"></el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-            <template #footer>
-            <span class="dialog-footer">
-              <el-button @click="dialogVisible = false">取 消</el-button>
-              <el-button type="primary" @click="confirm">确 定</el-button>
-            </span>
-            </template>
-          </el-dialog>
+<!--            <el-space :size="33">-->
+<!--              <el-space direction="vertical"  class="select" alignment="flex-start" :size="15">-->
+<!--                &lt;!&ndash;专业筛选&ndash;&gt;-->
+<!--                <el-space wrap :size="1">-->
+<!--                  <h4>专业类别：</h4>-->
+<!--                  <el-cascader-->
+<!--                      placeholder="试试搜索：计算机类"-->
+<!--                      :options="options"-->
+<!--                      :props="{ multiple: true }"-->
+<!--                      filterable-->
+<!--                      collapse-tags-->
+<!--                      ref="cascadeAddr"-->
+<!--                      clearable-->
+<!--                      @change="getData" class="float search"></el-cascader>-->
+<!--                </el-space>-->
+<!--                &lt;!&ndash;层级&ndash;&gt;-->
+<!--                <el-space  wrap :size="1">-->
+<!--                  <h4>院校层次：</h4>-->
+<!--                  <el-space :size="10" :spacer="spacer">-->
+<!--                    <el-radio-group v-model="subForm.type" @change="getData" class="float">-->
+<!--                      <el-radio-button label="全部" class="float  three_box color"></el-radio-button>-->
+<!--                      <el-radio-button label="本科" class="float  three_box color"></el-radio-button>-->
+<!--                      <el-radio-button label="专科" class="float  three_box color"></el-radio-button>-->
+<!--                    </el-radio-group>-->
+<!--                    <el-switch v-model="Switch" active-text="查看所有学校" inactive-text="仅查看已选学校" @change="switchOption" class="margin2"></el-switch>-->
+<!--                  </el-space>-->
+<!--                </el-space>-->
+<!--                &lt;!&ndash;选课要求&ndash;&gt;-->
+<!--                <el-space  wrap :size="1">-->
+<!--                  <h4 >所选科目：</h4>-->
+<!--                  <el-space :size="10" :spacer="spacer">-->
+<!--                    <div>-->
+<!--                      <el-checkbox-group v-model="subForm.subject" size="small" @change="getData">-->
+<!--                        <el-checkbox-button v-for="major in majors" :label="major" :key="major">{{major}}</el-checkbox-button>-->
+<!--                      </el-checkbox-group>-->
+<!--                    </div>-->
+<!--                    <el-space wrap :size="10">-->
+<!--                      <h4 class="margin1">高考位次：</h4>-->
+<!--                      <el-space wrap :size="40">-->
+<!--                        <el-input v-model.number="subForm.rank" placeholder="高考位次" @change="getData" class="float ranking"></el-input>-->
+<!--                        <el-button type="primary" @click="getDataCreate">生成志愿</el-button>-->
+<!--                      </el-space>-->
+<!--                    </el-space>-->
+<!--                  </el-space>-->
+<!--                </el-space>-->
+<!--              </el-space>-->
+<!--            </el-space>-->
+<!--            &lt;!&ndash;结果&ndash;&gt;-->
+<!--            <el-table :data="majorCreateList"-->
+<!--                      highlight-current-row-->
+<!--                      @change="getData"-->
+<!--                      max-height="700"-->
+<!--                      :border = true-->
+<!--                      :header-cell-style="{'text-align':'center'}"-->
+<!--                      :cell-style="{'text-align':'center'}">-->
+<!--              <el-table-column property="admissionDirection" label="院校"></el-table-column>-->
+<!--              <el-table-column property="major" label="专业"></el-table-column>-->
+<!--              <el-table-column property="lowLevel" label="最低录取位次"></el-table-column>-->
+<!--              <el-table-column  label="操作">-->
+<!--                <template #default="scope">-->
+<!--                  <el-button type="danger" icon="el-icon-delete" circle @click="delCreate(scope.row.major_id)"></el-button>-->
+<!--                </template>-->
+<!--              </el-table-column>-->
+<!--            </el-table>-->
+<!--            <template #footer>-->
+<!--            <span class="dialog-footer">-->
+<!--              <el-button @click="dialogVisible = false">取 消</el-button>-->
+<!--              <el-button type="primary" @click="confirm">确 定</el-button>-->
+<!--            </span>-->
+<!--            </template>-->
+<!--          </el-dialog>-->
           <!--分页-->
           <el-pagination
               @size-change="pageSizeChange"
               @current-change="pageCurrentChange"
-              :current-page="selForm.pageNum"
+              :current-page="subForm.pageNum"
               :page-sizes="[5, 50, 100]"
-              :page-size= "selForm.pageSize"
-              layout="total, sizes, prev, pager, next, jumper"
+              :page-size= "subForm.pageSize"
+              layout="prev, pager, next"
               :total="total"
               background>
           </el-pagination>
@@ -234,30 +233,42 @@
 <script>
 import { h } from 'vue'
 import {ElDivider, ElMessage} from 'element-plus'
-const cityOptions = ['物理', '化学', '生物', '政治', '历史', '地理'];
+const majorOptions = ['全部','物理', '化学', '生物', '政治', '历史', '地理','不限'];
 export default {
   name: "MajorInf",
 
   data() {
     return {
+      info:{
+        userId:1,
+      },
       spacer: h(ElDivider, { direction: 'vertical' }),
       props: {multiple: true},
       options:require('../../../public/static/Data/majorData.json'),
       Switch: false,
       subForm:{
-        majorList:[],
-        batch:'全部',
-        currentPage: 1,
+        majorList:null,
+        type:'全部',
+        pageNum: 1,
         pageSize: 50,
-        subject: [],
-        lowLevel: ''
+        subject: '全部',
+        rank: 1
       },
-      rank: '',
+      //添加预选专业
+      addForm:{
+        userId:'',
+        specialName:'',
+        schoolName:'',
+        lowRank:''
+      },
+
+
       dialogVisible: false,
-      getMajorList:[],
+      specialList:[],//专业分数线列表
+
       total: 0,
       spaceSize:20,
-      majors: cityOptions,
+      majors: majorOptions,
       drawer: false,
       majorChoiceList:[],
       majorCreateList:[],
@@ -270,54 +281,56 @@ export default {
     }
   },
   mounted() {
-    this.submit();
+    this.getData();
+    this.info.userId = window.sessionStorage.getItem("userId");
+    this.addForm.userId = window.sessionStorage.getItem("userId").toString();
+    this.subForm.rank = parseInt(window.sessionStorage.getItem("rank"));
   },
   methods: {
     getData() {
-      this.subForm.lowLevel = this.rank
-      if (this.subForm.lowLevel === ''){
-        this.subForm.lowLevel = 0
+      this.subForm.majorList = null;
+      if (this.subForm.rank === ''){
+        this.subForm.rank = 1;
       }
-      this.subForm.majorList = []
-
       for (let i = 0; i < this.$refs['cascadeAddr'].getCheckedNodes().length; i++) {
         if (this.$refs['cascadeAddr'].getCheckedNodes()[i].level === 1) {
-          this.subForm.majorList[i] = this.$refs['cascadeAddr'].getCheckedNodes()[i].data.label
+          this.subForm.majorList = this.$refs['cascadeAddr'].getCheckedNodes()[0].data.label
         }
       }
-      if (this.Switch === false){
+
+      if (this.subForm.subject === ''){
+        this.subForm.subject = '全部';
+      }
+      if (!this.Switch){
         this.$http({
           method: 'post',
-          url: '/User/showMajorWithoutUniversity',
+          url: '/SpecialsBoardLine/getMajorScoreList',
           data: this.subForm
-        }).then(res => {
-          console.log(res);
-          this.getMajorList = res.data.list
-          this.total = res.data.total
+        }).then(({data})=> {
+          this.specialList = data.specialList
+          this.total = data.total;
         })
       }
       else {
         this.$http({
-          method: 'post',
-          url: '/User/showMajorFromSelectUniversity',
-          data: this.subForm
-        }).then(res => {
-          console.log(res);
-          this.getMajorList = res.data.list
-          this.total = res.data.total
+          method: 'get',
+          url: '/SpecialsBoardLine/getMajorInfoByChosenSchool?userId=' + this.info.userId + '&&pageNum=' + this.subForm.pageNum + '&&pageSize=' + this.subForm.pageSize,
+        }).then(({data})=> {
+          console.log(data);
+          this.specialList = data.specialList
+          this.total = data.total;
         })
       }
-
     },
+    //查看已选专业
     showDrawer() {
-      this.majorList = []
+      this.majorList = null
       this.$http({
-        method: 'post',
-        url: '/User/showMajorSelected',
-        data: this.choiceMajor
-      }).then(res => {
-
-        this.majorChoiceList = res.data
+        method: 'get',
+        url: '/SpecialsBoardLine/showSelectedSpecials?userId=' + this.info.userId,
+      }).then(({data}) => {
+        console.log(data);
+        this.majorChoiceList = data.list;
       })
       this.drawer = true
     },
@@ -325,67 +338,67 @@ export default {
       if (newSize === null)
         return
       this.subForm.pageSize = newSize;
-      this.submit();
+      this.getData();
     },
     pageCurrentChange(newPage) {
       if (newPage === null)
         return
       this.subForm.pageNum = newPage;
-      this.submit();
+      this.getData();
     },
-    add(id) {
-      this.subForm.major_id = id
+    add(item) {
+      this.addForm.userId = 1;
+      this.addForm.specialName = item.specialName;
+      this.addForm.schoolName = item.schoolName;
+      this.addForm.lowRank = item.lowRank;
+      console.log(this.addForm)
       this.$http({
         method: 'post',
-        url: '/User/insertMajorIntoDatabase',
-        data: this.subForm
-      }).then(res => {
-        console.log(res)
-        if (res.data.info.code === 200) {
+        url: '/SpecialsBoardLine/selSpecial',
+        data: this.addForm
+      }).then(({data}) => {
+        console.log(data)
+        if (data.code === 200) {
           ElMessage.success({
-            message: res.data.info.message,
+            message: "添加成功",
             type: 'success'
           });
         }
         else{
           ElMessage.warning({
-            message: res.data.info.message,
+            message: data.msg,
             type: 'warning'
           });
         }
       })
     },
-    del(id) {
-      this.subForm.major_id = id
-
+    del(item) {
       this.$http({
-        method: 'post',
-        url: '/User/deleteMajorByStudent',
-        data: this.subForm
-      }).then(res => {
-        if (res.data.info.code === 200) {
+        method: 'get',
+        url: '/SpecialsBoardLine/removeSelectSpecial?specialName=' + item.specialName + '&&schoolName=' + item.schoolName + '&&userId=' + this.info.userId ,
+      }).then(({data}) => {
+        if (data.code === 200) {
           ElMessage.success({
-            message: res.data.info.message,
+            message: '删除成功',
             type: 'success'
           });
         }
         else{
           ElMessage.warning({
-            message: res.data.info.message,
+            message: data.msg,
             type: 'warning'
           });
         }
       })
       //利用延时解决删除已选学校更新列表错误的问题
       this.timer = setTimeout(() => {   //设置延迟执行
-        console.log('ok');
         this.showDrawer()
       }, 100);
     },
     switchOption() {
-      this.subForm.majorList = []
+      this.getData();
 
-      for (let i = 0; i < this.$refs['cascadeAddr'].getCheckedNodes().length; i++) {
+      /*for (let i = 0; i < this.$refs['cascadeAddr'].getCheckedNodes().length; i++) {
         if (this.$refs['cascadeAddr'].getCheckedNodes()[i].level === 1) {
           this.subForm.majorList[i] = this.$refs['cascadeAddr'].getCheckedNodes()[i].data.label
         }
@@ -398,7 +411,7 @@ export default {
           data: this.subForm
         }).then(res => {
 
-          this.getMajorList = res.data.list
+          this.majorScoreList = res.data.list
           this.total = res.data.total
         })
       }
@@ -409,18 +422,17 @@ export default {
           data: this.subForm
         }).then(res => {
 
-          this.getMajorList = res.data.list
+          this.majorScoreList = res.data.list
           this.total = res.data.total
         })
       }
-
+*/
     },
     showCreateForm(){
       this.dialogVisible = true
     },
     submitCreate(){
       this.majorCreateList = []
-      this.subForm.lowLevel = this.rank
       if (this.subForm.lowLevel === ''){
         this.subForm.lowLevel = 0
       }

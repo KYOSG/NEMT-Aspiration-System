@@ -66,7 +66,7 @@ const routes = [{
       component: StudentWelcome,
     },{
       path: '/SchoolSel',
-      component: SchoolSel,
+      component: ()=>import("@/views/StudentHome/SchoolSel"),
     },{
       path: '/MajorSel',
       component: MajorSel,

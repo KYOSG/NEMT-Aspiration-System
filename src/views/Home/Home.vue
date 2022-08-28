@@ -66,7 +66,7 @@
     </div>
     <!--功能卡-->
     <div class="wrapper">
-      <div class="box"  @click="School">
+      <div class="box"  @click="this.$router.push('/SchoolInf');">
         <div class="front-face">
           <school/>
           <span>院校库</span>
@@ -79,7 +79,7 @@
         </div>
       </div>
 
-      <div class="box"  @click="Major">
+      <div class="box"  @click="this.$router.push('/MajorInf');">
         <div class="front-face">
           <Collection/>
           <span>专业库</span>
@@ -108,12 +108,7 @@ export default {
     window.sessionStorage.setItem("Login", "0");
   },
   methods:{
-    School:function (){
-      this.$router.push('/SchoolPublic');
-    },
-    Major:function (){
-      this.$router.push('/MajorPublic');
-    },
+
   },
   components: {
     School,

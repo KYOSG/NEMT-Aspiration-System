@@ -11,15 +11,15 @@
         </div>
         <div class="fr">
           <ul>
-            <li><a @click="StudentHomee">个人主页</a></li>
+            <li><a @click="this.$router.push('/StudentHome');">个人主页</a></li>
             <li></li>
-            <li class="arrow-icon"><a @click="SchoolSell">院校选择</a></li>
+            <li class="arrow-icon"><a @click="this.$router.push('/SchoolSel');">院校选择</a></li>
             <li></li>
-            <li><a @click="MajorSell">专业选择</a></li>
+            <li><a @click="this.$router.push('/MajorSel');">专业选择</a></li>
             <li></li>
-            <li class="arrow-icon"><a @click="School">院校信息查询</a></li>
+            <li class="arrow-icon"><a @click="this.$router.push('/SchoolInf');">院校信息查询</a></li>
             <li></li>
-            <li class="arrow-icon"><a @click="Major">专业信息查询</a></li>
+            <li class="arrow-icon"><a @click="this.$router.push('/MajorInf');">专业信息查询</a></li>
           </ul>
         </div>
       </div>
@@ -46,24 +46,82 @@
                     <el-cascader
                         placeholder="试试搜索：北京"
                         :options="options"
-                        :props="{ multiple: true }"
                         filterable
                         collapse-tags
                         ref="cascadeAddr"
                         clearable
-                        @change="submit"></el-cascader>
+                        @change="getData">
+                    </el-cascader>
                   </el-space>
                 </div>
                 <!--主管部门-->
                 <div>
                   <el-space wrap :size="43">
                     <span class="demonstration">主管部门 </span>
-                    <el-radio-group v-model="selForm.manage" @change="submit">
+                    <el-radio-group v-model="subForm.belong" @change="getData">
                       <el-radio-button label="全部"></el-radio-button>
+                      <el-radio-button label="地方"></el-radio-button>
+                      <el-radio-button label="地方教委"></el-radio-button>
+                      <el-radio-button label="地方教育厅"></el-radio-button>
+                      <el-radio-button label="公安部/军校/武警"></el-radio-button>
                       <el-radio-button label="教育部"></el-radio-button>
                       <el-radio-button label="其他部委"></el-radio-button>
-                      <el-radio-button label="地方"></el-radio-button>
-                      <el-radio-button label="军校"></el-radio-button>
+                      <el-radio-button label="其他"></el-radio-button>
+
+                    </el-radio-group>
+                  </el-space>
+                </div>
+                <!--院校类型-->
+                <div>
+                  <el-space wrap :size="43">
+                    <span class="demonstration">院校类型 </span>
+                    <el-radio-group v-model="subForm.typeNameT" @change="getData">
+                      <el-radio-button label="全部"></el-radio-button>
+                      <el-radio-button label="理工"></el-radio-button>
+                      <el-radio-button label="综合"></el-radio-button>
+                      <el-radio-button label="语言"></el-radio-button>
+                      <el-radio-button label="艺术"></el-radio-button>
+                      <el-radio-button label="农林"></el-radio-button>
+                      <el-radio-button label="民族"></el-radio-button>
+                      <el-radio-button label="医药"></el-radio-button>
+                      <el-radio-button label="师范"></el-radio-button>
+                      <el-radio-button label="财经"></el-radio-button>
+                      <el-radio-button label="体育"></el-radio-button>
+                      <el-radio-button label="政法"></el-radio-button>
+                      <el-radio-button label="军事"></el-radio-button>
+                    </el-radio-group>
+                  </el-space>
+                </div>
+                <!--办学类型-->
+                <div>
+                  <el-space  wrap :size="43">
+                    <span class="demonstration">办学类型 </span>
+                    <el-radio-group v-model="subForm.handleType" @change="getData">
+                      <el-radio-button label="全部"></el-radio-button>
+                      <el-radio-button label="民办"></el-radio-button>
+                      <el-radio-button label="公办"></el-radio-button>
+                      <el-popover
+                          placement="bottom"
+                          title="985工程"
+                          :width="200"
+                          trigger="hover"
+                          content="是为了实现现代化，建立若干所具有世界先进水平的一流大学的建设工程。">
+                        <template #reference>
+                          <el-radio-button label="985工程"></el-radio-button>
+                        </template>
+                      </el-popover>
+
+                      <el-popover
+                          placement="bottom"
+                          title="211工程"
+                          :width="200"
+                          trigger="hover"
+                          content="面向21世纪、重点建设100所左右的高等学校和一批重点学科的建设工程。">
+                        <template #reference>
+                          <el-radio-button label="211工程"></el-radio-button>
+                        </template>
+                      </el-popover>
+                      <el-radio-button label="中外合作办学"></el-radio-button>
                     </el-radio-group>
                   </el-space>
                 </div>
@@ -71,67 +129,18 @@
                 <div>
                   <el-space  wrap :size="43">
                     <span class="demonstration">院校层级 </span>
-                    <el-radio-group v-model="selForm.layer" @change="submit">
+                    <el-radio-group v-model="subForm.layer" @change="getData">
                       <el-radio-button label="全部"></el-radio-button>
-                      <el-radio-button label="本科"></el-radio-button>
-                      <el-radio-button label="高职（专科）"></el-radio-button>
-                      <el-radio-button label="独立学院"></el-radio-button>
-                      <el-radio-button label="中外合作办学"></el-radio-button>
+                      <el-radio-button label="普通本科"></el-radio-button>
+                      <el-radio-button label="专科（高职）"></el-radio-button>
                     </el-radio-group>
-                  </el-space>
-
-                </div>
-                <!--特点-->
-                <div>
-                  <el-space wrap :size="43">
-                    <span class="demonstration">院校特点 </span>
-                    <el-space :size="10" :spacer="spacer">
-                      <el-radio-group v-model="selForm.level" @change="submit">
-                        <el-radio-button label="全部"></el-radio-button>
-                        <el-popover
-                            placement="bottom"
-                            title="985工程"
-                            :width="200"
-                            trigger="hover"
-                            content="是为了实现现代化，建立若干所具有世界先进水平的一流大学的建设工程。">
-                          <template #reference>
-                            <el-radio-button label="985院校"></el-radio-button>
-                          </template>
-                        </el-popover>
-                        <el-popover
-                            placement="bottom"
-                            title="211工程"
-                            :width="200"
-                            trigger="hover"
-                            content="面向21世纪、重点建设100所左右的高等学校和一批重点学科的建设工程。">
-                          <template #reference>
-                            <el-radio-button label="211院校"></el-radio-button>
-                          </template>
-                        </el-popover>
-                      </el-radio-group>
-                      <el-popover
-                          placement="right"
-                          title="双一流高校"
-                          :width="200"
-                          trigger="hover"
-                          content="建设世界一流大学和一流学科，是中共中央、国务院作出的重大战略决策，也是中国高等教育领域继“211工程”“985工程”之后的又一国家战略。">
-                        <template #reference>
-                          <el-switch
-                              v-model="Switch"
-                              active-color="#13ce66"
-                              inactive-color="#ff4949"
-                              active-text="仅查看双一流高校"
-                              @change="submit"></el-switch>
-                        </template>
-                      </el-popover>
-                    </el-space>
                   </el-space>
                 </div>
                 <!--搜索-->
                 <el-space>
                   <el-input
                       placeholder="请输入院校名称"
-                      v-model="selForm.name"
+                      v-model="subForm.name"
                       @keyup.enter.native="search"
                       clearable>
                   </el-input >
@@ -145,8 +154,8 @@
             <el-table
                 :data="schoolList"
                 highlight-current-row
-                max-height="700"
                 :border = true
+                max-height="1200px"
                 :header-cell-style="{'text-align':'center'}"
                 :cell-style="{'text-align':'center'}">
               <el-table-column label="" prop="">
@@ -156,14 +165,15 @@
                   </el-card>
                 </template>
               </el-table-column>
-              <el-table-column label="院校代码" prop="school_code" width="80"></el-table-column>
               <el-table-column label="院校名称" prop="name"></el-table-column>
-              <el-table-column label="所在地" prop="position"></el-table-column>
-              <el-table-column label="院校层级" prop="layer"></el-table-column>
+              <el-table-column label="所在地" prop="cityName"></el-table-column>
+              <el-table-column label="主管部门" prop="belong"></el-table-column>
+              <el-table-column label="办学类型" prop="levelName"></el-table-column>
               <el-table-column label="院校类型" prop="typeName"></el-table-column>
+              <el-table-column label="院校特点" prop="dualClassName" ></el-table-column>
               <el-table-column label="操作">
                 <template #default="scope">
-                  <el-button type="primary" round @click="add(scope.row.school_id)">加入备选</el-button>
+                  <el-button type="primary" round @click="add(scope.row.name)">加入备选</el-button>
                 </template>
               </el-table-column>
             </el-table>
@@ -171,12 +181,11 @@
             <el-pagination
                 @size-change="pageSizeChange"
                 @current-change="pageCurrentChange"
-                :current-page="selForm.pageNum"
+                :current-page="subForm.pageNum"
                 :page-sizes="[5, 50, 100]"
-                :page-size= "selForm.pageSize"
-                layout="total, sizes, prev, pager, next, jumper"
+                :page-size= "subForm.pageSize"
+                layout="prev, pager, next"
                 :total="total"
-                :disabled = "searchOption"
                 background>
             </el-pagination>
           </div>
@@ -192,16 +201,16 @@
           size="50%">
         <el-table :data="schoolChoiceList"
                   highlight-current-row
-                  @change="submit"
-                  max-height="700"
+                  @change="getData"
+                  max-height="700px"
                   :border = true
                   :header-cell-style="{'text-align':'center'}"
                   :cell-style="{'text-align':'center'}">
           <el-table-column property="name" label="院校名称"></el-table-column>
-          <el-table-column property="layer" label="院校层级"></el-table-column>
+<!--          <el-table-column property="layer" label="院校层级"></el-table-column>-->
           <el-table-column  label="操作">
             <template #default="scope">
-              <el-button type="danger" icon="el-icon-delete" circle @click="del(scope.row.school_id)"></el-button>
+              <el-button type="danger" icon="el-icon-delete" circle @click="del(scope.row.name)"></el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -218,102 +227,92 @@ export default {
 
   data() {
     return {
+      info:{
+        userId:'',
+      },
       spacer: h(ElDivider, {direction: 'vertical'}),
       props: {multiple: true},
       Switch: false,
       options: require('../../../public/static/Data/positionData.json'),
       subForm: {
-        position: [],
-        manage: '全部',
-        level: '全部',
-        layer: '全部',
-        features: '',
+        position:null,
+        belong: '全部',
+        level:'全部',
+        layer:'全部',
+        typeName:'',
+        typeNameT:'全部',
+        isDual: false,
         currentPage: 1,
         pageSize: 50,
-        name: '',
-        schoolChoice: [],
+        name: null,
+        handleType:'全部'//办学类型
       },
       schoolList: [],
       schoolChoiceList: [],
       total: 0,
       spaceSize: 20,
-      searchOption: false,
       drawer: false,
-      choiceSchool: {
-        university_id: ''
-      },
     }
 
   },
   mounted() {
-    this.submit();
+    this.info.userId = window.sessionStorage.getItem("userId");
+    this.getData();
   },
   methods: {
-    StudentHomee:function (){
-      this.$router.push('/StudentHome');
-    },
-    School:function (){
-      this.$router.push('/SchoolInf');
-    },
-    Major:function (){
-      this.$router.push('/MajorInf');
-    },
-    SchoolSell:function (){
-      this.$router.push('/SchoolSel');
-    },
-    MajorSell:function (){
-      this.$router.push('/MajorSel');
-    },
     getData() {
-      this.searchOption = false
-      this.subForm.position = []
+      this.subForm.position = null;
       //给位置数组赋值方便后端接收数据
-      for (let i = 0; i < this.$refs['cascadeAddr'].getCheckedNodes().length; i++) {
+      for(let i=0;i<this.$refs['cascadeAddr'].getCheckedNodes().length;i++){
         if (this.$refs['cascadeAddr'].getCheckedNodes()[i].level === 2) {
-          this.subForm.position[i] = this.$refs['cascadeAddr'].getCheckedNodes()[i].data.label
+          this.subForm.position = this.$refs['cascadeAddr'].getCheckedNodes()[i].data.label
         }
       }
-      //处理开关数据
-      if (this.Switch === true) {
-        this.subForm.Features = 'T'
-      } else {
-        this.subForm.Features = 'F'
+
+      //院校类型数据
+      if (this.subForm.typeNameT !== '全部'){
+        this.subForm.typeName=this.subForm.typeNameT + '类';
+      }else {
+        this.subForm.typeName=this.subForm.typeNameT;
       }
+
+      //处理开关数据
+      this.subForm.isDual = this.Switch.toString();
 
       this.$http({
         method: 'post',
-        url: '/User/showUniversityByNeed',
+        url: '/schoolInfo/getSchoolInfo',
         data: this.subForm
-      }).then(res => {
-        console.log(res);
-        for (let i = 0; i < res.data.list.length; i++) {
-          res.data.list[i].type = res.data.list[i].firstClass
-          res.data.list[i].site = 'https://static-data.eol.cn/upload/logo/' + res.data.list[i].school_id + '.jpg'
+      }).then(({data}) => {
+        console.log(data);
+        for(let i=0;i<data.SchoolInfo.length;i++) {
+          // data.SchoolInfo[i].type = data.SchoolInfo[i].firstClass
+          //拼接校徽图片链接
+          data.SchoolInfo[i].site = 'https://static-data.eol.cn/upload/logo/' + data.SchoolInfo[i].schoolId + '.jpg'
+          data.SchoolInfo[i].levelName = data.SchoolInfo[i].handleName + '-' + data.SchoolInfo[i].levelName
         }
 
-        this.schoolList = res.data.list
-        this.total = res.data.total
+        this.schoolList = data.SchoolInfo
+        this.total = data.total
       })
     },
 
-    add(id) {
-      this.choiceSchool.university_id = id
-      console.log(this.choiceSchool)
-      this.$http({
-        method: 'post',
-        url: '/User/selectUniversityByStudent',
-        data: this.choiceSchool
-      }).then(res => {
-        console.log(res.data)
-        if (res.data.info.code === 200) {
+    add(name) {
+      console.log(name);
+        this.$http({
+        method: 'get',
+        url: '/schoolInfo/selSchool?schoolName=' + name + '&&userId=' + this.info.userId,
+      }).then(({data}) => {
+        console.log(data)
+        if (data.code === 200) {
           ElMessage.success({
-            message: res.data.info.message,
+            message: "添加成功",
             type: 'success'
           });
         }
         else {
           ElMessage.warning({
-            message: res.data.info.message,
+            message: data.msg,
             type: 'warning'
           });
         }
@@ -321,37 +320,38 @@ export default {
       })
     },
 
-    del(id) {
-      this.choiceSchool.university_id = id
-
+    del(name) {
       this.$http({
-        method: 'post',
-        url: '/User/deleteUniversitySelected',
-        data: this.choiceSchool
-      }).then(res => {
-        ElMessage.warning({
-          message: res.data.info.message,
-          type: 'warning'
-        });
+        method: 'get',
+        url: '/schoolInfo/delSchool?schoolName=' + name + '&&userId=' + this.info.userId,
+      }).then(({data}) => {
+        if (data.code === 200) {
+          ElMessage.success({
+            message: "删除成功",
+            type: 'success'
+          });
+        }
+        else {
+          ElMessage.warning({
+            message: data.msg,
+            type: 'warning'
+          });
+        }
       })
       //利用延时解决删除已选学校更新列表错误的问题
       this.timer = setTimeout(()=>{   //设置延迟执行
-        console.log('ok');
         this.showDrawer()
       },100);
 
     },
 
-
     showDrawer() {
       this.schoolChoiceList = []
       this.$http({
-        method: 'post',
-        url: '/User/showUniversitySelected',
-        data: this.choiceSchool
-      }).then(res => {
-        console.log(res)
-        this.schoolChoiceList = res.data
+        method: 'get',
+        url: '/schoolInfo/showChosenSchool?userId=' + this.info.userId,
+      }).then(({data}) => {
+        this.schoolChoiceList = data.list;
       })
       this.drawer = true
     },
@@ -359,32 +359,25 @@ export default {
       if (newSize === null)
         return
       this.subForm.pageSize = newSize;
-      this.submit();
+      this.getData();
     },
     pageCurrentChange(newPage) {
       this.subForm.pageNum = newPage;
-      this.submit();
+      this.getData();
     },
-    search() {
-      this.searchOption = true
-
-      this.subForm.pageNum = 1;
-      this.subForm.pageSize = 50;
-
+    search(){
       this.$http({
-        method: 'post',
-        url: '/User/getUniversityByName',
+        method:'post',
+        url:'/schoolInfo/searchSchool',
         data: this.subForm
-      }).then(res => {
-
-        console.log(res.data)
-        for (let i = 0; i < res.data.length; i++) {
-          res.data[i].type = res.data[i].firstClass
-          res.data[i].site = 'https://static-data.eol.cn/upload/logo/' + res.data[i].school_id + '.jpg'
+      }).then(({data})=> {
+        console.log(data);
+        for(let i=0;i<data.SchoolInfo.length;i++) {
+          data.SchoolInfo[i].site = 'https://static-data.eol.cn/upload/logo/' + data.SchoolInfo[i].schoolId + '.jpg'
+          data.SchoolInfo[i].levelName = data.SchoolInfo[i].handleName + '-' + data.SchoolInfo[i].levelName
         }
-        this.schoolList = res.data
-        this.total = res.data.length
-
+        this.schoolList = data.SchoolInfo
+        this.total = data.SchoolInfo.length;
       })
     },
   }
@@ -407,7 +400,7 @@ li {
 }
 .body {
 
-  height: 1400px;
+  height: 1900px;
   background-color:#fff;
 
 }

@@ -97,8 +97,28 @@
                     <el-radio-button label="全部"></el-radio-button>
                     <el-radio-button label="民办"></el-radio-button>
                     <el-radio-button label="公办"></el-radio-button>
-                    <el-radio-button label="985工程"></el-radio-button>
-                    <el-radio-button label="211工程"></el-radio-button>
+                    <el-popover
+                        placement="bottom"
+                        title="985工程"
+                        :width="200"
+                        trigger="hover"
+                        content="是为了实现现代化，建立若干所具有世界先进水平的一流大学的建设工程。">
+                      <template #reference>
+                        <el-radio-button label="985院校"></el-radio-button>
+                      </template>
+                    </el-popover>
+
+                    <el-popover
+                        placement="bottom"
+                        title="211工程"
+                        :width="200"
+                        trigger="hover"
+                        content="面向21世纪、重点建设100所左右的高等学校和一批重点学科的建设工程。">
+                      <template #reference>
+                        <el-radio-button label="211院校"></el-radio-button>
+                      </template>
+                    </el-popover>
+
                     <el-radio-button label="中外合作办学"></el-radio-button>
                   </el-radio-group>
                 </el-space>
@@ -119,10 +139,10 @@
                 <el-input
                     placeholder="请输入院校名称"
                     v-model="subForm.name"
-                    clearable
-                    @keyup.enter.native="search">
+                    @keyup.enter.native="search"
+                    clearable>
                 </el-input >
-                <el-button icon="el-icon-search" @click="search" type="primary"></el-button>
+                <el-button style=" margin-top:0;width: 56px;height: 40px;" icon="el-icon-search" @click="search" type="primary"></el-button>
               </el-space>
             </el-space>
           </el-space>
@@ -241,7 +261,7 @@
               @current-change="pageCurrentChange"
               :current-page="subForm.currentPage"
               :page-size= "subForm.pageSize"
-              layout="total, prev, pager, next"
+              layout="prev, pager, next"
               :total="total"
               background
               style="margin-top: 30px">
@@ -253,7 +273,7 @@
 
 </template>
 
-<script lang="ts">
+<script>
 import { h } from 'vue'
 import { ElDivider } from 'element-plus'
 import * as echarts from "echarts";
@@ -319,15 +339,11 @@ export default {
       //处理开关数据
       this.subForm.isDual = this.Switch.toString();
 
-
-      console.log(this.subForm)
-
       this.$http({
         method:'post',
         url:'/schoolInfo/getSchoolInfo',
         data: this.subForm
       }).then(({data})=> {
-        console.log(data);
         for(let i=0;i<data.SchoolInfo.length;i++) {
           // data.SchoolInfo[i].type = data.SchoolInfo[i].firstClass
           //拼接校徽图片链接
@@ -355,7 +371,6 @@ export default {
         url:'/schoolInfo/searchSchool',
         data: this.subForm
       }).then(({data})=> {
-        console.log(data);
         for(let i=0;i<data.SchoolInfo.length;i++) {
           data.SchoolInfo[i].site = 'https://static-data.eol.cn/upload/logo/' + data.SchoolInfo[i].schoolId + '.jpg'
           data.SchoolInfo[i].levelName = data.SchoolInfo[i].handleName + '-' + data.SchoolInfo[i].levelName

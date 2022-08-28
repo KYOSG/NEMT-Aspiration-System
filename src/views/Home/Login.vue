@@ -1,14 +1,12 @@
 <template>
 
-  <div className="body">
-
+  <div class="body">
     <img src="../../img/banner1.png" alt="">
-
-    <div className="login_box">
-      <div className="box">
+    <div class="login_box">
+      <div class="box">
         <h2>登录</h2>
-        <input type="text" className="typing" placeholder="用户名" v-model="loginForm.username">
-        <input type="password" className="typing" placeholder="密码" v-model="loginForm.password">
+        <input type="text" class="typing" placeholder="用户名" v-model="loginForm.username">
+        <input type="password" class="typing" placeholder="密码" v-model="loginForm.password">
         <a class="button" @click="login">登录</a>
 
       </div>
@@ -30,40 +28,40 @@ export default {
   methods: {
     login() {
       this.$http({
-        method: 'post',
-        url: '/User/Login',
-        data: this.loginForm
-      }).then(res => {
-        if (res.data.info.code !== 200) {
+        method: 'get',
+        url: '/user/login?username=' + this.loginForm.username + '&&password=' + this.loginForm.password,
+      }).then(({data}) => {
+        if (data.code !== 200) {
           this.$notify({
             title: '登陆失败',
-            message: res.data.info.message,
+            message: data.msg,
             type: 'warning'
           });
-          return;
+        }else {
+          if (data.role !== "admin") {
+            this.messageName = this.loginForm.username
+          } else {
+            this.messageName = '管理员'
+          }
+          //登陆提示
+          this.$notify({
+            title: '登陆成功',
+            message: '你好，' + this.messageName,
+            type: 'success'
+          });
+          window.sessionStorage.setItem("userId", data.user.userId);
+          window.sessionStorage.setItem("username", this.loginForm.username);
+          window.sessionStorage.setItem("role", data.user.role);
+          window.sessionStorage.setItem("Login", "1");
+          window.sessionStorage.setItem("rank",data.user.rank);
+          //在此处进行身份识别和跳转到对应的页面。
+           if (data.user.role === "admin")
+             this.$router.push("/ManagerHome");
+           else if (data.user.role === "student")
+             this.$router.push("/StudentHome");
+           else if (data.user.role === "teacher")
+             this.$router.push("/TeacherHome");
         }
-        if (res.data.data.identity !== "admin") {
-          this.messageName = this.loginForm.username
-        } else {
-          this.messageName = '管理员'
-        }
-        //登陆提示
-        this.$notify({
-          title: '登陆成功',
-          message: '你好，' + this.messageName,
-          type: 'success'
-        });
-        // window.sessionStorage.setItem("token", res.data.data.token);
-        window.sessionStorage.setItem("username", this.loginForm.username);
-        window.sessionStorage.setItem("identity", res.data.data.identity);
-        window.sessionStorage.setItem("Login", "1");
-        //在此处进行身份识别和跳转到对应的页面。
-        if (res.data.data.identity === "admin")
-          this.$router.push("/ManagerHome");
-        else if (res.data.data.identity === "editor")
-          this.$router.push("/StudentHome");
-        else if (res.data.data.identity === "teacher")
-          this.$router.push("/TeacherHome");
       })
     }
   }
@@ -75,7 +73,6 @@ export default {
   position: relative;
   width: 100%;
   height: 100%;
-
 }
 
 .box h2 {
@@ -88,6 +85,7 @@ export default {
 }
 
 .login_box {
+  margin-top: 100px;
   position: absolute;
   float: left;
   left: 20%;

@@ -23,20 +23,6 @@
             </template>
           </el-popover>
 
-            <!--姓名-->
-          <el-popover
-              placement="right"
-              title="姓名"
-              :width="200"
-              trigger="hover"
-              content="您的真实姓名"
-          >
-            <template #reference>
-              <el-form-item label="姓名" class="fromItem" prop="st_name">
-                <el-input v-model="signUpForm.st_name" clearable></el-input>
-              </el-form-item>
-            </template>
-          </el-popover>
             <!--密码-->
           <el-popover
               placement="right"
@@ -71,8 +57,8 @@
               content="您的高考位次"
           >
             <template #reference>
-              <el-form-item label="高考位次" class="fromItem" prop="st_mark">
-                <el-input v-model.number="signUpForm.st_mark" clearable></el-input>
+              <el-form-item label="高考位次" class="fromItem" prop="rank">
+                <el-input v-model.number="signUpForm.rank" clearable></el-input>
               </el-form-item>
             </template>
           </el-popover>
@@ -128,10 +114,10 @@ export default {
 
     const checkst_mark = (rule, value, callback) => {
       if (!/^[0-9]*^\d{0,6}$/.test(value)) {
-        this.checkMark = false
+        this.checkRank = false
         callback(new Error('请正确输入高考位次'))
       }else{
-        this.checkMark = true
+        this.checkRank = true
         callback();
       }
     }
@@ -140,16 +126,14 @@ export default {
       labelPosition: 'right',
       signUpForm: {
         username: '',
-        st_name: '',
-        st_mark: '',
-        st_number: '',
+        rank: '',
         password: '',
         checkPass:'',
       },
       checkUsername:false,
       checkPassword:false,
       checkPassword2:false,
-      checkMark:true,
+      checkRank:true,
       signUpFromRules: {
         username: [
           {required: true, message: "请输入用户名", trigger: "blur"},
@@ -165,7 +149,7 @@ export default {
           {required: true, message: "请再次输入密码", trigger: "blur"},
           { validator: checkPassword2, trigger: 'blur' }
         ],
-        st_mark: [
+        rank: [
           {validator: checkst_mark, trigger: "blur"}
         ],
       },
@@ -178,25 +162,29 @@ export default {
 
     getData() {
       if (this.checkUsername&&this.checkPassword&&this.checkPassword2&&(this.checkMark||!this.signUpForm.st_mark)){
-        this.sub()
+        this.submit()
       }
       else {
+        this.$notify({
+          title: '警告',
+          message: "信息不全",
+          type: 'warning'
+        });
       }
     },
-    sub(){
-      console.log(this.signUpForm)
+    submit(){
       this.$http({
         method: 'post',
-        url: '/User/SignUp',
-        data: this.signUpForm
-      }).then(res => {
-        if (res.data.info.code !== 200){
+        url: '/user/signup',
+        data:this.signUpForm
+      }).then(({data}) => {
+        if (data.code !== 200){
           this.$notify({
             title: '警告',
-            message: res.data.info.message,
+            message: data.msg,
             type: 'warning'
           });
-          return
+          return;
         }
         this.$notify({
           title: '成功',
